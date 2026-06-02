@@ -17,7 +17,7 @@
 ||Pinia|状态管理|
 |**后端**|Spring Boot|3.x|
 ||MyBatis-Plus|数据持久层|
-||MySQL|8.0+|
+||MySQL|8.0+|   MySQL | | | 8.0 |
 ||JWT|身份认证|
 |**其他**|Maven|项目构建|
 ||Redis|缓存（可选）|
