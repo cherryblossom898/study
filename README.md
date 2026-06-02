@@ -17,7 +17,7 @@
 ||Pinia|状态管理|
 |**后端**|Spring Boot|3.x|
 ||MyBatis-Plus|数据持久层|
-||MySQL|8.0+|
+||MySQL|8.0+|   MySQL | | | 8.0 |
 ||JWT|身份认证|
 |**其他**|Maven|项目构建|
 ||Redis|缓存（可选）|
@@ -80,17 +80,56 @@
 
 ## 项目结构
 
-![[Pasted image 20260602201633.png]]
+```
+CourseQuerySystem
+├── course-query-frontend          # 前端项目
+│   ├── public
+│   ├── src
+│   │   ├── api                    # 接口封装
+│   │   ├── assets                 # 静态资源
+│   │   ├── components             # 公共组件
+│   │   ├── layout                 # 布局组件
+│   │   ├── router                 # 路由配置
+│   │   ├── stores                 # Pinia 状态管理
+│   │   ├── utils                  # 工具函数（Axios 封装等）
+│   │   ├── views                  # 页面组件
+│   │   │   ├── login              # 登录页
+│   │   │   ├── student            # 学生端
+│   │   │   ├── teacher            # 教师端
+│   │   │   ├── admin              # 管理员端
+│   │   │   ├── public             # 公共查询
+│   │   │   └── error              # 错误页
+│   │   ├── App.vue
+│   │   └── main.js
+│   ├── package.json
+│   └── vite.config.js
+│
+└── course-query-system            # 后端项目（Spring Boot）
+    ├── src/main/java/com/example/coursequerysystem
+    │   ├── common                  # 通用工具（Result, AuthUtils, UserContext 等）
+    │   ├── config                  # 配置类（CORS, MyBatis-Plus, 上传配置）
+    │   ├── controller              # 控制器
+    │   ├── entity                  # 实体类
+    │   ├── interceptor             # 拦截器（Token 校验）
+    │   ├── mapper                  # Mapper 接口
+    │   ├── service                 # 业务接口
+    │   │   └── impl                # 业务实现
+    │   ├── utils                   # 工具类（JWT, FileUtils）
+    │   └── vo                      # 视图对象
+    └── src/main/resources
+        ├── application.yml         # 主配置文件
+        └── mapper                  # Mapper XML 映射文件
+```
 
 ## 快速开始
 
 ### 环境要求
 
-- JDK 17+
+- JDK 17+   - JDK 17
     
 - Node.js 18+
     
-- MySQL 8.0+
+- MySQL 8.0+   - MySQL 8.0
     
 - Redis 6.0+（可选，仅需缓存时配置）
     
@@ -101,7 +140,7 @@
     
     sql
     
-    CREATE DATABASE course_query_system CHARACTER SET utf8mb4;
+    CREATE DATABASE course_query_system CHARACTER SET utf8mb4;创建数据库course_query_system字符集utf8mb4
     
 2. 执行项目提供的 SQL 脚本 `init.sql`（建表 + 测试数据）。
     
