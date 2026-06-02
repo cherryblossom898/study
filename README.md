@@ -80,46 +80,7 @@
 
 ## 项目结构
 
-text
-
-CourseQuerySystem
-├── course-query-frontend          # 前端项目
-│   ├── public
-│   ├── src
-│   │   ├── api                    # 接口封装
-│   │   ├── assets                 # 静态资源
-│   │   ├── components             # 公共组件
-│   │   ├── layout                 # 布局组件
-│   │   ├── router                 # 路由配置
-│   │   ├── stores                 # Pinia 状态管理
-│   │   ├── utils                  # 工具函数（Axios 封装等）
-│   │   ├── views                  # 页面组件
-│   │   │   ├── login              # 登录页
-│   │   │   ├── student            # 学生端
-│   │   │   ├── teacher            # 教师端
-│   │   │   ├── admin              # 管理员端
-│   │   │   ├── public             # 公共查询
-│   │   │   └── error              # 错误页
-│   │   ├── App.vue
-│   │   └── main.js
-│   ├── package.json
-│   └── vite.config.js
-│
-└── course-query-system            # 后端项目（Spring Boot）
-    ├── src/main/java/com/example/coursequerysystem
-    │   ├── common                  # 通用工具（Result, AuthUtils, UserContext 等）
-    │   ├── config                  # 配置类（CORS, MyBatis-Plus, 上传配置）
-    │   ├── controller              # 控制器
-    │   ├── entity                  # 实体类
-    │   ├── interceptor             # 拦截器（Token 校验）
-    │   ├── mapper                  # Mapper 接口
-    │   ├── service                 # 业务接口
-    │   │   └── impl                # 业务实现
-    │   ├── utils                   # 工具类（JWT, FileUtils）
-    │   └── vo                      # 视图对象
-    └── src/main/resources
-        ├── application.yml         # 主配置文件
-        └── mapper                  # Mapper XML 映射文件
+![[Pasted image 20260602201633.png]]
 
 ## 快速开始
 
