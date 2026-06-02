@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.coursequerysystem.mapper.EnrollmentMapper">
+    <!-- 查询已选课程列表 -->
+    <select id="selectStudentSchedule" resultType="com.example.coursequerysystem.vo.StudentScheduleVO">
+        SELECT
+        t.teaching_id,
+        c.id AS course_id,
+        c.course_name,
+        te.teacher_name,
+        cr.room_name AS classroom_name,
+        ts.weekday,
+        ts.section,
+        TIME_FORMAT(ts.start_time, '%H:%i') AS start_time,
+        TIME_FORMAT(ts.end_time, '%H:%i') AS end_time,
+        c.credit,
+        c.hours,
+        t.semester
+        FROM enrollment e
+        INNER JOIN teaching t ON e.teaching_id = t.teaching_id
+        INNER JOIN course c ON t.course_id = c.id
+        INNER JOIN teacher te ON t.teacher_id = te.teacher_id
+        INNER JOIN classroom cr ON t.room_id = cr.room_id
+        INNER JOIN time_schedule ts ON t.schedule_id = ts.schedule_id
+        WHERE e.student_id = #{studentId}
+        <if test="semester != null and semester != ''">
+            AND t.semester = #{semester}
+        </if>
+        ORDER BY ts.weekday, ts.start_time
+    </select>
+
+    <!-- 查询可选课程列表 -->
+    <select id="selectAvailableCourses" resultType="com.example.coursequerysystem.vo.AvailableCourseVO">
+        SELECT
+        t.teaching_id,
+        c.course_code,
+        c.course_name,
+        c.credit,
+        c.hours,
+        te.teacher_name,
+        cr.room_name AS classroomName,
+        t.semester,
+        ts.weekday,
+        ts.section,
+        TIME_FORMAT(ts.start_time, '%H:%i') AS startTime,
+        TIME_FORMAT(ts.end_time, '%H:%i') AS endTime,
+        c.max_students AS maxStudents,
+        c.current_students AS currentStudents,
+        IF(e.enrollment_id IS NOT NULL, TRUE, FALSE) AS isSelected
+        FROM teaching t
+        INNER JOIN course c ON t.course_id = c.id
+        INNER JOIN teacher te ON t.teacher_id = te.teacher_id
+        INNER JOIN classroom cr ON t.room_id = cr.room_id
+        INNER JOIN time_schedule ts ON t.schedule_id = ts.schedule_id
+        LEFT JOIN enrollment e ON t.teaching_id = e.teaching_id AND e.student_id = #{studentId}
+        WHERE t.semester = #{semester}
+        AND c.current_students &lt; c.max_students   <!-- 未满员 -->
+        ORDER BY ts.weekday, ts.start_time
+    </select>
+
+    <!-- 检查是否已选某教学班 -->
+    <select id="countByStudentAndTeaching" resultType="int">
+        SELECT COUNT(*)
+        FROM enrollment
+        WHERE student_id = #{studentId} AND teaching_id = #{teachingId}
+    </select>
+
+    <!-- 查询学生已选课程的时间安排 -->
+    <select id="selectStudentSchedules" resultType="com.example.coursequerysystem.entity.TimeSchedule">
+        SELECT ts.*
+        FROM enrollment e
+                 INNER JOIN teaching t ON e.teaching_id = t.teaching_id
+                 INNER JOIN time_schedule ts ON t.schedule_id = ts.schedule_id
+        WHERE e.student_id = #{studentId}
+          AND t.semester = #{semester}
+    </select>
+    <!--查询教师授课学生名单  -->
+    <select id="selectStudentsByTeachingId" resultType="com.example.coursequerysystem.vo.TeachingStudentsVO">
+        SELECT
+            s.student_id,
+            s.student_name,
+            s.gender,
+            s.major,
+            s.class AS className,
+            DATE_FORMAT(e.enroll_time, '%Y-%m-%d %H:%i:%s') AS enrollTime,
+            e.enrollment_id,
+            e.grade
+        FROM enrollment e
+                 INNER JOIN student s ON e.student_id = s.student_id
+        WHERE e.teaching_id = #{teachingId}
+        ORDER BY e.enroll_time
+    </select>
+
+    <!--查询学生已选课程-->
+    <select id="selectMyCourses" resultType="com.example.coursequerysystem.vo.MyCourseVO">
+        SELECT
+        t.teaching_id,
+        c.course_name,
+        te.teacher_name,
+        c.credit,
+        c.hours,
+        ts.weekday,
+        ts.section,
+        cr.room_name AS classroom,
+        t.semester,
+        e.grade
+        FROM enrollment e
+        INNER JOIN teaching t ON e.teaching_id = t.teaching_id
+        INNER JOIN course c ON t.course_id = c.id
+        INNER JOIN teacher te ON t.teacher_id = te.teacher_id
+        INNER JOIN time_schedule ts ON t.schedule_id = ts.schedule_id
+        INNER JOIN classroom cr ON t.room_id = cr.room_id
+        WHERE e.student_id = #{studentId}
+        <if test="semester != null and semester != ''">
+            AND t.semester = #{semester}
+        </if>
+        ORDER BY ts.weekday, ts.start_time
+    </select>
+
+</mapper>

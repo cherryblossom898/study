@@ -1,0 +1,14 @@
+# 前端忽略
+frontend/node_modules/
+frontend/.env
+frontend/dist/
+
+# 后端忽略
+backend/node_modules/
+backend/__pycache__/
+backend/venv/
+backend/.env
+
+# 系统文件
+.DS_Store
+Thumbs.db

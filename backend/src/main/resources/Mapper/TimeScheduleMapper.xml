@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.coursequerysystem.mapper.TimeScheduleMapper">
+
+    <!--
+        根据星期和节次范围查询时间安排ID列表
+        注意：XML 中不能直接使用 < 或 >，必须转义为 &lt; 和 &gt;
+    -->
+    <select id="selectScheduleIdsByWeekdayAndSection" resultType="string">
+        SELECT schedule_id
+        FROM time_schedule
+        WHERE weekday = #{weekday}
+          AND CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(section, '-', 1), '节', 1) AS UNSIGNED) &gt;= #{startSection}
+          AND CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(section, '-', -1), '节', 1) AS UNSIGNED) &lt;= #{endSection}
+    </select>
+
+</mapper>

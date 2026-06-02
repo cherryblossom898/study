@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.coursequerysystem.mapper.TeachingMapper">
+
+    <select id="selectTeacherSchedule" resultType="com.example.coursequerysystem.vo.TeacherScheduleVO">
+        SELECT
+        t.teaching_id,
+        c.course_name,
+        cr.room_name AS classroomName,
+        ts.weekday,
+        ts.section,
+        TIME_FORMAT(ts.start_time, '%H:%i') AS startTime,
+        TIME_FORMAT(ts.end_time, '%H:%i') AS endTime,
+        t.semester,
+        c.max_students AS capacity,
+        c.current_students AS selectedCount,
+        GROUP_CONCAT(DISTINCT s.class ORDER BY s.class SEPARATOR ',') AS className
+        FROM teaching t
+        INNER JOIN course c ON t.course_id = c.id
+        INNER JOIN classroom cr ON t.room_id = cr.room_id
+        INNER JOIN time_schedule ts ON t.schedule_id = ts.schedule_id
+        LEFT JOIN enrollment e ON t.teaching_id = e.teaching_id
+        LEFT JOIN student s ON e.student_id = s.student_id
+        WHERE t.teacher_id = #{teacherId}
+        <if test="semester != null and semester != ''">
+            AND t.semester = #{semester}
+        </if>
+        GROUP BY t.teaching_id, c.course_name, cr.room_name, ts.weekday, ts.section,
+        ts.start_time, ts.end_time, t.semester, c.max_students, c.current_students
+        ORDER BY ts.weekday, ts.start_time
+    </select>
+
+    <select id="countConflictTeaching" resultType="int">
+        SELECT COUNT(*)
+        FROM teaching t
+        WHERE t.semester = #{semester}
+        AND t.schedule_id = #{scheduleId}
+        <if test="teacherId != null">
+            AND t.teacher_id = #{teacherId}
+        </if>
+        <if test="roomId != null">
+            AND t.room_id = #{roomId}
+        </if>
+        <if test="excludeTeachingId != null">
+            AND t.teaching_id != #{excludeTeachingId}
+        </if>
+    </select>
+
+    <select id="selectTeachingPage" resultType="com.example.coursequerysystem.vo.TeachingVO">
+        SELECT
+        t.teaching_id,
+        t.course_id,
+        c.course_name,
+        t.teacher_id,
+        te.teacher_name,
+        t.room_id,
+        cr.room_name,
+        t.schedule_id,
+        ts.weekday,
+        ts.section,
+        ts.start_time,
+        ts.end_time,
+        t.semester,
+        t.start_date,
+        t.end_date
+        FROM teaching t
+        LEFT JOIN course c ON t.course_id = c.id
+        LEFT JOIN teacher te ON t.teacher_id = te.teacher_id
+        LEFT JOIN classroom cr ON t.room_id = cr.room_id
+        LEFT JOIN time_schedule ts ON t.schedule_id = ts.schedule_id
+        <where>
+            <if test="keyword != null and keyword != ''">
+                AND (
+                t.teaching_id LIKE CONCAT('%', #{keyword}, '%')
+                OR c.course_name LIKE CONCAT('%', #{keyword}, '%')
+                OR te.teacher_name LIKE CONCAT('%', #{keyword}, '%')
+                )
+            </if>
+            <if test="semester != null and semester != ''">
+                AND t.semester = #{semester}
+            </if>
+            <if test="teacherId != null and teacherId != ''">
+                AND t.teacher_id = #{teacherId}
+            </if>
+            <if test="roomId != null and roomId != ''">
+                AND t.room_id = #{roomId}
+            </if>
+        </where>
+        ORDER BY t.semester DESC, ts.weekday, ts.start_time
+    </select>
+
+</mapper>

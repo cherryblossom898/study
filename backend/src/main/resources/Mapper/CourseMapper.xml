@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.coursequerysystem.mapper.CourseMapper">
+
+    <!-- 原有查询（如有）可保留在此处，以下是公开查询 -->
+
+    <!-- 公开课程分页查询（含类型名称） -->
+    <select id="selectPublicCoursePage" resultType="com.example.coursequerysystem.vo.CoursePublicVO">
+        SELECT
+        c.id,
+        c.course_code,
+        c.course_name,
+        c.credit,
+        c.hours,
+        ct.type_name,
+        c.semester,
+        c.max_students,
+        c.current_students
+        FROM course c
+        LEFT JOIN course_type ct ON c.type_id = ct.type_id
+        <where>
+            <if test="courseName != null and courseName != ''">
+                AND c.course_name LIKE CONCAT('%', #{courseName}, '%')
+            </if>
+            <if test="semester != null and semester != ''">
+                AND c.semester = #{semester}
+            </if>
+            <if test="typeId != null and typeId != ''">
+                AND c.type_id = #{typeId}
+            </if>
+        </where>
+        ORDER BY c.course_code
+    </select>
+
+    <!-- 查询全部课程（含类型名称） -->
+    <select id="selectPublicAllCourses" resultType="com.example.coursequerysystem.vo.CoursePublicVO">
+        SELECT
+            c.id,
+            c.course_code,
+            c.course_name,
+            c.credit,
+            c.hours,
+            ct.type_name,
+            c.semester,
+            c.max_students,
+            c.current_students
+        FROM course c
+                 LEFT JOIN course_type ct ON c.type_id = ct.type_id
+        ORDER BY c.course_code
+    </select>
+
+</mapper>

@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.coursequerysystem.mapper.ClassroomMapper">
+
+    <!--
+        如果你之前已经存在其他查询（如分页），请保留在此处。
+        以下为新增的空闲教室查询。
+    -->
+
+    <!--
+        查询指定时间段内空闲的教室
+        逻辑：找出所有在该学期、该星期、指定节次范围内没有被排课占用的教室
+    -->
+    <select id="selectAvailableClassrooms" resultType="com.example.coursequerysystem.entity.Classroom">
+        SELECT
+        room_id,
+        room_name,
+        capacity
+        FROM classroom c
+        WHERE NOT EXISTS (
+        SELECT 1
+        FROM teaching t
+        WHERE t.room_id = c.room_id
+        AND t.semester = #{semester}
+        AND t.schedule_id IN
+        <foreach collection="scheduleIds" item="sid" open="(" separator="," close=")">
+            #{sid}
+        </foreach>
+        )
+        ORDER BY c.room_name
+    </select>
+
+</mapper>

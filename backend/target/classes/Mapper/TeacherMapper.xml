@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.coursequerysystem.mapper.TeacherMapper">
+
+    <!-- 原有查询（如有）可保留在此处，以下是公开查询 -->
+
+    <!-- 公开教师分页查询（含院系名称） -->
+    <select id="selectPublicTeacherPage" resultType="com.example.coursequerysystem.vo.TeacherPublicVO">
+        SELECT
+        t.teacher_id,
+        t.teacher_name,
+        t.gender,
+        t.title,
+        d.department_name
+        FROM teacher t
+        LEFT JOIN department d ON t.department_id = d.department_id
+        <where>
+            <if test="teacherName != null and teacherName != ''">
+                AND t.teacher_name LIKE CONCAT('%', #{teacherName}, '%')
+            </if>
+            <if test="departmentId != null and departmentId != ''">
+                AND t.department_id = #{departmentId}
+            </if>
+            <if test="title != null and title != ''">
+                AND t.title = #{title}
+            </if>
+        </where>
+        ORDER BY t.teacher_id
+    </select>
+
+    <!-- 查询全部教师（含院系名称） -->
+    <select id="selectPublicAllTeachers" resultType="com.example.coursequerysystem.vo.TeacherPublicVO">
+        SELECT
+            t.teacher_id,
+            t.teacher_name,
+            t.gender,
+            t.title,
+            d.department_name
+        FROM teacher t
+                 LEFT JOIN department d ON t.department_id = d.department_id
+        ORDER BY t.teacher_id
+    </select>
+
+</mapper>
